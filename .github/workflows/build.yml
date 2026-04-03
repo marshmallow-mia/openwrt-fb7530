@@ -1,0 +1,66 @@
+
+name: Build OpenWrt image for Fritzbox 7530
+
+on:
+  # Triggers the workflow on push to the main branch
+  push:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+
+  create-image:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Load configuration from repo
+        run: |
+          cat config
+          image=$(grep '^image=' config | cut -d= -f2-)
+          profile=$(grep '^profile=' config | cut -d= -f2-)
+          openwrt_version=$(grep '^openwrt_version=' config | cut -d= -f2-)
+          packages=$(grep '^packages=' config | cut -d= -f2-)
+          disabled_services=$(grep '^disabled_services=' config | cut -d= -f2-)
+          debug=$(grep '^debug=' config | cut -d= -f2-)
+          echo "image=${image}" >> "$GITHUB_ENV"
+          echo "profile=${profile}" >> "$GITHUB_ENV"
+          echo "openwrt_version=${openwrt_version}" >> "$GITHUB_ENV"
+          echo "packages=${packages}" >> "$GITHUB_ENV"
+          echo "disabled_services=${disabled_services}" >> "$GITHUB_ENV"
+          echo "debug=${debug}" >> "$GITHUB_ENV"
+
+      - name: Build OpenWrt image
+        uses: izer-xyz/openwrt-imagebuilder-action@v5
+        with:
+          image: ${{ env.image }}
+          profile: ${{ env.profile }}
+          openwrt-version: ${{ env.openwrt_version }}
+          packages: ${{ env.packages }}
+          debug: ${{ env.debug }}
+          files: files
+          disabled-services: ${{ env.disabled_services }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.openwrt_version }}-${{ github.run_number }}
+          body: |
+            Custom OpenWrt build for AVM Fritzbox 7530
+
+            * OpenWrt version: ${{ env.openwrt_version }}
+            * Image: ${{ env.image }}
+            * Profile: ${{ env.profile }}
+            * Packages: ${{ env.packages }}
+
+          files: |
+            bin/*
