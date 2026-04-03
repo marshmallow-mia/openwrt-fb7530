@@ -1,9 +1,11 @@
 
-image=bcm27xx-bcm2711
+image=ipq40xx-generic
 
-openwrt_version=23.05.0
+profile=avm_fritz7530
 
-packages=block-mount -iwinfo
+openwrt_version=23.05.5
+
+packages=luci luci-ssl block-mount kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat
 
 disabled_services=
 
