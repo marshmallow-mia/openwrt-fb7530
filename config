@@ -1,7 +1,6 @@
-
 image=ipq40xx-generic
 
-profile=avm_fritz7530
+profile=avm_fritzbox-7530
 
 openwrt_version=23.05.5
 
