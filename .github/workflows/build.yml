@@ -28,16 +28,20 @@ jobs:
           cat config
           image=$(grep '^image=' config | cut -d= -f2-)
           profile=$(grep '^profile=' config | cut -d= -f2-)
-          openwrt_version=$(grep '^openwrt_version=' config | cut -d= -f2-)
           packages=$(grep '^packages=' config | cut -d= -f2-)
           disabled_services=$(grep '^disabled_services=' config | cut -d= -f2-)
           debug=$(grep '^debug=' config | cut -d= -f2-)
           echo "image=${image}" >> "$GITHUB_ENV"
           echo "profile=${profile}" >> "$GITHUB_ENV"
-          echo "openwrt_version=${openwrt_version}" >> "$GITHUB_ENV"
           echo "packages=${packages}" >> "$GITHUB_ENV"
           echo "disabled_services=${disabled_services}" >> "$GITHUB_ENV"
           echo "debug=${debug}" >> "$GITHUB_ENV"
+
+      - name: Fetch latest OpenWrt version
+        run: |
+          openwrt_version=$(curl -sSL "https://api.github.com/repos/openwrt/openwrt/releases/latest" | grep '"tag_name"' | sed 's/.*"v\([^"]*\)".*/\1/')
+          echo "openwrt_version=${openwrt_version}" >> "$GITHUB_ENV"
+          echo "Latest OpenWrt version: ${openwrt_version}"
 
       - name: Build OpenWrt image
         uses: izer-xyz/openwrt-imagebuilder-action@v5
