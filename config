@@ -2,7 +2,8 @@ image=ipq40xx-generic
 
 profile=avm_fritzbox-7530
 
-packages=luci luci-ssl block-mount kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat
+# packages=luci luci-ssl block-mount kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat
+packages=luci luci-ssl luci-app-package-manager ds-lite block-mount kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat
 
 disabled_services=
 
